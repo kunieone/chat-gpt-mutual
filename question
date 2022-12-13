@@ -1,0 +1,16 @@
+I want to connect to the OKEx API and use the Python language to develop a quantitative trading script. The general logic of this script is as follows: every day at 0 o'clock in the morning, start monitoring all the "perpetual contract" digital currencies in the market, integrate the trading volume and amplitude, and "whether the unilateral growth/decline" to select, the relative volatility is the strongest, the trading volume and other data The currency is marked. After that, these currencies will be short or long respectively by the MACD cross strategy.
+
+参数	类型	是否必须	描述
+op	String	是	操作，login
+args	Array	是	账户列表，最多100组
+> apiKey	String	是	APIKey
+> passphrase	String	是	APIKey 的密码
+> timestamp	String	是	时间戳，Unix Epoch时间，单位是秒
+> sign	String	是	签名字符串
+api_key:调用API的唯一标识。需要用户手动设置一个 passphrase:APIKey的密码 timestamp:Unix Epoch 时间戳，单位为秒 sign:签名字符串，签名算法如下：
+先将timestamp 、 method 、requestPath 进行字符串拼接，再使用HMAC SHA256方法将拼接后的字符串和SecretKey加密，然后进行Base64编码
+SecretKey:用户申请APIKey时所生成的安全密钥，如：22582BD0CFF14C41EDBF1AB98506286D
+其中 timestamp 示例:const timestamp = '' + Date.now() / 1,000
+其中 sign 示例: sign=CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(timestamp +'GET'+ '/users/self/verify', secret))
+method 总是 'GET'
+requestPath 总是 '/users/self/verify'

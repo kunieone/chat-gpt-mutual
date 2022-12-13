@@ -1,0 +1,67 @@
+修改一下main函数，我想把原先从命令行输入修改到从一个当前相对路径下的input.md文件输入。采用UTF8编码，整个main函数只需要响应键盘输入的y或者yes或者Y，来重新扫描input文件并且进行输出。并且输出了Ai的答案后，自动清空原先的input文件。当命令行检测到stop这个字符串的时候，整个程序将会退出。
+import openai
+import io
+import pyttsx3
+import time
+import datetime
+API_KEY = "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"
+
+def reviser(text):
+    return  generateAnswer("请把这段话精简一下："+text,"")
+
+
+def generateAnswer(talk, previous_conversation):
+    # Set your OpenAI API key
+    openai.api_key = API_KEY
+
+    # Generate text using GPT-3
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=talk + "\n" + previous_conversation,
+        max_tokens=1024,
+        temperature=0.5,
+    )
+    # Return the generated text
+    return response["choices"][0]["text"].strip()
+
+
+def textToAudio(answer):
+    engine = pyttsx3.init()
+    engine.say(answer)
+    engine.runAndWait()
+
+
+def outToFile(file_name,talk, answer, QName="Q", AName="A"):
+    with io.open(file_name, "a", encoding="utf-8") as file:
+        file.write("## "+QName+": " + talk + "\n")
+        file.write(AName+": " + answer + "\n")
+
+
+def getTimeFormatFileName():
+    # Generate the timestamp and file name
+    timestamp = time.time()
+    date = datetime.datetime.fromtimestamp(timestamp)
+    file_name = date.strftime("%Y-%m-%d-%H:%M:%S") + ".md"
+    return file_name
+def main2():
+    # Generate the timestamp and file name
+    file_name = ai.getTimeFormatFileName()
+
+    # Keep track of the previous conversation
+    pre_conversation = ""
+    
+    # Loop until the user inputs "Goodbye"
+    talk = input("请输入内容：")
+    while talk != "Goodbye":
+        # Call the outputAnswerToFile function and get the response
+        answer=ai.generateAnswer(talk, pre_conversation)
+        print(answer)
+        ai.outToFile(file_name,talk, answer)
+        pre_conversation += talk
+        # Print the response and ask for the next input
+        talk = input("请输入内容：")
+
+
+
+
+    
